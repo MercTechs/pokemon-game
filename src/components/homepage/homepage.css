@@ -1,0 +1,5 @@
+.game-mode-card {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+}
