@@ -1,6 +1,6 @@
 import React from "react";
 import GameModeCard from "../game-mode-card/game-mode-card";
-import './homepage.css';
+import styles from './homepage.module.css';
 
 function HomePage() {
   const gameMode = [
@@ -12,11 +12,21 @@ function HomePage() {
 
   return (
     <div>
-      <div className="banner">
-        <div className="main-content">POKEMON FLIPCARD GAME</div>
+      <div className={styles.banner}>
+        <div className="main-content">
+        <div>
+        <a href="https://www.pokemon.com/" target="_blank">
+          <img src='https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/International_Pok%C3%A9mon_logo.svg/2560px-International_Pok%C3%A9mon_logo.svg.png' className="logo" alt="Pokemon logo" />
+        </a>
+
+      </div>
+      <h1>POKEMON FLIPCARD GAME</h1>
+        </div>
       </div>
       <div className="game-mode">
-        <div className="game-mode-text">Select Mode</div>
+        <div className={styles['select-mode']}>
+            <strong>Select Mode</strong>
+        </div>
         <div className="game-mode-card">
           {gameMode.map((mode) => (
             <GameModeCard

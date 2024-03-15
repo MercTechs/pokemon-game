@@ -13,6 +13,12 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 
 a {
   font-weight: 500;
@@ -41,6 +47,7 @@ h1 {
     "MORF" 15,
     "SHLN" 50;
   font-size: 120px;
+  line-height: 1;
 }
 
 button {

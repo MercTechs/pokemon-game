@@ -1,0 +1,14 @@
+.game-mode-card {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+}
+
+.banner {
+    display: flex;
+}
+
+.select-mode {
+    margin: 16px;
+    font-size: 24px;
+}
