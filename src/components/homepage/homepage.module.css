@@ -1,7 +1,10 @@
 .game-mode-card {
     display: flex;
-    flex-direction: row;
+    flex-direction: row wrap;
     gap: 20px;
+    justify-content: center;
+    align-items: center;
+    margin: auto;
 }
 
 .banner {
@@ -9,6 +12,10 @@
 }
 
 .select-mode {
-    margin: 16px;
+    margin: 40px;
     font-size: 24px;
+    font-family: "Madimi One", sans-serif;
+    font-weight: 400;
+    font-size: 40px;
+
 }
