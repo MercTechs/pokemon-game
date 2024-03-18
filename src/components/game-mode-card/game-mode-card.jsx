@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
-import "./game-mode-card.css";
+import styles from './game-mode-card.module.css'
 
 function GameModeCard(props) {
     const navigate = useNavigate();
@@ -11,11 +11,11 @@ function GameModeCard(props) {
     }
   return (
     <div onClick={handleClick}>
-      <div className="card-box">
-        <div className="level-number">
+      <div className={styles['card-box']}>
+        <div className={styles['level-number']}>
           {props.level}x{props.level}
         </div>
-        <div className="level-text">{props.difficulty}</div>
+        <div className={styles['level-text']}>{props.difficulty}</div>
       </div>
     </div>
   );
