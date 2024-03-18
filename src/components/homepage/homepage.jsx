@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React from "react";
 import GameModeCard from "../game-mode-card/game-mode-card";
 import styles from './homepage.module.css';
