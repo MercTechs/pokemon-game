@@ -1,0 +1,11 @@
+.game-cell {
+    border: 1px solid black;
+}
+
+.back-btn {
+    position: absolute;
+    bottom: 5%;
+    left: 5%;
+    box-shadow: 2px 2px 8px 1px;
+    border-radius: 10px;
+}
