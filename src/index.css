@@ -19,7 +19,6 @@
   box-sizing: border-box;
 }
 
-
 a {
   font-weight: 500;
   color: #646cff;
@@ -43,9 +42,7 @@ h1 {
   font-optical-sizing: auto;
   font-weight: 400;
   font-style: normal;
-  font-variation-settings:
-    "MORF" 15,
-    "SHLN" 50;
+  font-variation-settings: "MORF" 15, "SHLN" 50;
   font-size: 120px;
   line-height: 1;
 }
