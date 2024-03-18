@@ -39,7 +39,6 @@ function GameScreen() {
         throw new Error("Invalid level specified.");
     }
 
-    const totalImages = level * level;
     const pairs = [];
 
     // Generate unique pairs
@@ -70,7 +69,7 @@ function GameScreen() {
       }
     }
     console.log("Original Array =====2222222222222222:", pairs);
-    console.log("New Array with 8 elements:", pickid);
+    console.log("New Array with ${maxPairs*2} elements:", pickid);
 
     // Duplicate pairs if needed
     const imagePairs = [...pickid, ...pickid];
@@ -81,7 +80,7 @@ function GameScreen() {
     }
 
     // Return only the required number of pairs
-    return imagePairs.slice(0, totalImages);
+    return imagePairs;
   }
 
   // Example usage:
