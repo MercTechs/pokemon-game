@@ -20,5 +20,8 @@
 
 .back-btn {
     position: absolute;
-    top: -8px;
+    bottom: 5%;
+    left: 5%;
+    box-shadow: 2px 2px 8px 1px;
+    border-radius: 10px;
 }
