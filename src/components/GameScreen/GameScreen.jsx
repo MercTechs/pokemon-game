@@ -97,7 +97,6 @@ function GameScreen() {
         style={{
           display: "grid",
           gridTemplateColumns: `repeat(${gridSize}, 1fr)`,
-q
         }}
       >
         {imagePairs.map((id, index) => (
