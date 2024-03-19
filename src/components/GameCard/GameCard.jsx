@@ -1,5 +1,5 @@
-import PropTypes from "prop-types"; 
-import './GameCard.css'
+import PropTypes from "prop-types";
+import styles from './GameCard.module.css'
 
 function GameCard(props) {
   let lastClick
@@ -13,28 +13,24 @@ function GameCard(props) {
 
   return (
 
-    <div class="flip-card" style={{
-      position: 'relative', width: '130px', height: '170px', transition: 'transform 0.6s',
-      transformStyle: 'preserve-3d'
-    }} >
-      <div class="flip-card-inner">
-        <div class="flip-card-front">
-          <img style={{ maxWidth: "70px", padding: "15px 10px", position: 'absolute', top: '25%', left: '25%', zIndex: '2' , className: "card-front" }}
+    <div className={styles["flip-card"]}  >
+      <div className={styles["flip-card-inner"]}>
+        <div className={styles["flip-card-front"]}>
+          <img style={{ maxWidth: "70px" , position: 'absolute', top: '20%', left: '9%' }}
             alt="random"
-            src={`/src/img/pokemons/back-card/PokeBall1.png`} />
+            src={`/src/img/pokemons/back-card/PokeBall1.png`}
+            className={styles["card-front"]} />
         </div>
-        <div class="flip-card-back">
-          <img
-            style={{ zIndex: '1', maxWidth: "70px", padding: "15px 10px", position: 'absolute', top: '25%', left: '25%', className: "card-back" }}
+        <div className={styles["flip-card-back"]}>
+          <img style={{ maxWidth: "70px" , position: 'absolute', top: '20%', left: '9%' }}
             src={`/src/img/pokemons/${props.imgId}.png`}
             alt="random"
-          />
+            className={styles["card-back"]} />
         </div>
         <div>{props.imgId}</div>
       </div>
     </div>
-
-  );
+  )
 }
 
 GameCard.propTypes = {
