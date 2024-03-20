@@ -1,9 +1,9 @@
 /* eslint-disable no-unused-vars */
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 
 import styles from "./GameScreen.module.css";
-
+  
 import GameCard from "../GameCard/GameCard";
 
 function GameScreen() {
@@ -11,9 +11,36 @@ function GameScreen() {
   const gridSize = parseInt(level, 10);
 
   const navigate = useNavigate();
+
+  // State to track flipped cards
+  const [flippedCards, setFlippedCards] = useState([]);
+
   const handleBack = () => {
     navigate("/");
   };
+
+  //  handle flip logic
+  const handleCardFlip = (index) => {
+    // If there are already 2 cards flipped and not yet handled, reset them
+    if (flippedCards.length === 2) {
+      // Reset immediately if a third card is clicked
+      setFlippedCards([index]);
+    } else {
+      // Add the new flipped card to the state
+      setFlippedCards([...flippedCards, index]);
+    }
+  };
+
+   // Effect to handle the flipping back logic after 1 second
+   useEffect(() => {
+    if (flippedCards.length === 2) {
+      const timer = setTimeout(() => {
+        setFlippedCards([]);
+      }, 1000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [flippedCards]);
 
   function generateImagePairs(level) {
     let maxPairs;
@@ -101,7 +128,8 @@ function GameScreen() {
       >
         {imagePairs.map((id, index) => (
           <div key={index} className={styles["game-cell"]}>
-            <GameCard key={index} id={index} imgId={id} />
+            {/* Pass the handleCardFlip function and whether the card is flipped to GameCard */}
+            <GameCard key={index} id={index} imgId={id} onCardClick={() => handleCardFlip(index)} isFlipped={flippedCards.includes(index)} />
           </div>
         ))}
       </div>
