@@ -1,23 +1,12 @@
 import PropTypes from "prop-types";
 import styles from "./GameCard.module.css";
 
-function GameCard(props) {
-  let lastClick;
-
-  function handleClickCard(e) {
-    lastClick = props.imgId;
-    e.target.classList.toggle("click");
-    e.target.style.zIndex = 0;
-    console.log("hi", e.target);
-
-    const flipCard = document.querySelector(".flip-card-inner ");
-    flipCard.classList.toggle("flip");
-    console.log(flipCard);
-  }
+function GameCard({ id, imgId, onCardClick, isFlipped }) {
+  const cardClasses = `${styles["flip-card-inner"]} ${isFlipped ? styles.flip : ""}`;
 
   return (
-    <div className={styles["flip-card"]} onClick={handleClickCard}>
-      <div className={styles["flip-card-inner"]}>
+    <div className={styles["flip-card"]} onClick={onCardClick}>
+       <div className={cardClasses}>
         <div className={styles["flip-card-front"]}>
           <img
             style={{
@@ -39,20 +28,22 @@ function GameCard(props) {
               top: "20%",
               left: "9%",
             }}
-            src={`/src/img/pokemons/${props.imgId}.png`}
+            src={`/src/img/pokemons/${imgId}.png`}
             alt="random"
             className={styles["card-back"]}
           />
         </div>
-        <div>{props.imgId}</div>
+        <div>{imgId}</div>
       </div>
     </div>
   );
 }
 
 GameCard.propTypes = {
-  id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-  imgId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+  imgId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+  onCardClick: PropTypes.func.isRequired, // Ensure this prop is required for proper functionality
+  isFlipped: PropTypes.bool.isRequired, // Ensure this prop is required for controlling flip state
 };
 
 export default GameCard;
