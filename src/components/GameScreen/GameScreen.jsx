@@ -1,78 +1,10 @@
-/* eslint-disable no-unused-vars */
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 
 import styles from "./GameScreen.module.css";
 
 import GameCard from "../GameCard/GameCard";
-
-function generateImagePairs(level) {
-  let maxPairs;
-  let randomDifficulty;
-  switch (level) {
-    case "4":
-      maxPairs = 8;
-      randomDifficulty = 3;
-      break;
-    case "6":
-      maxPairs = 18;
-      randomDifficulty = 6;
-      break;
-    case "8":
-      maxPairs = 32;
-      randomDifficulty = 9;
-      break;
-    case "10":
-      maxPairs = 50;
-      randomDifficulty = 12;
-      break;
-    default:
-      throw new Error("Invalid level specified.");
-  }
-
-  const pairs = [];
-
-  // Generate unique pairs
-  while (pairs.length < maxPairs) {
-    const id = Math.floor(Math.random() * 64) + 1; // Generating image id between 1 and 64
-    if (!pairs.includes(id)) {
-      pairs.push(id);
-    }
-  }
-  let numToCut = Math.floor(Math.random() * randomDifficulty);
-  pairs.splice(0, numToCut);
-
-  console.log("Original Array ===========1111:", pairs);
-
-  const pickid = [];
-  // Index to keep track of where we are in the original array
-  let index = 0;
-
-  // Loop until pickid has maxPairs elements
-  while (pickid.length < maxPairs) {
-    // Append element from originalArray to pickid
-    pickid.push(pairs[index]);
-    // Move to the next element in the originalArray
-    index++;
-    // If we reach the end of the originalArray, loop back to the beginning
-    if (index === pairs.length) {
-      index = 0;
-    }
-  }
-  console.log("Original Array =====2222222222222222:", pairs);
-  console.log("New Array with ${maxPairs*2} elements:", pickid);
-
-  // Duplicate pairs if needed
-  const imagePairs = [...pickid, ...pickid];
-  // Shuffle pairs
-  for (let i = imagePairs.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [imagePairs[i], imagePairs[j]] = [imagePairs[j], imagePairs[i]];
-  }
-
-  // Return only the required number of pairs
-  return imagePairs;
-}
+import generateImagePairs from "./PairGen";
 
 function GameScreen() {
   const { level } = useParams();
@@ -84,9 +16,29 @@ function GameScreen() {
 
   // State to track flipped cards
   const [flippedCards, setFlippedCards] = useState([]);
+  const [cardBonuses, setCardBonuses] = useState([]); // Store bonuses for each card
+
+  useEffect(() => {
+    // Initialize bonuses for each card to 60
+    setCardBonuses(new Array(imagePairs.length).fill(60));
+  }, [imagePairs.length]);
+
+  useEffect(() => {
+    // Log cardBonuses whenever it changes
+    console.log("cardBonuses:", cardBonuses);
+  }, [cardBonuses]);
 
   const handleBack = () => {
     navigate("/");
+  };
+
+  // Function to update card bonuses
+  const updateCardBonuses = () => {
+    setCardBonuses((prevBonuses) =>
+      prevBonuses.map((bonus, index) =>
+        flippedCards.includes(index) ? bonus - 10 : bonus
+      )
+    );
   };
 
   //  handle flip logic
@@ -95,11 +47,11 @@ function GameScreen() {
     if (flippedCards.length === 2) {
       // Reset immediately if a third card is clicked
       setFlippedCards([index]);
+      updateCardBonuses([index]);
     } else {
       // Add the new flipped card to the state
       setFlippedCards([...flippedCards, index]);
     }
-    console.log(flippedCards, "flip");
   };
 
   // Effect to handle the flipping back logic after 1 second
@@ -107,11 +59,11 @@ function GameScreen() {
     if (flippedCards.length === 2) {
       const timer = setTimeout(() => {
         setFlippedCards([]);
+        updateCardBonuses(); // Update card bonuses after flipping back
       }, 1000);
-
       return () => clearTimeout(timer);
     }
-  }, [flippedCards]);
+  }, [flippedCards, updateCardBonuses]);
 
   return (
     <div className={styles["game-screen"]}>
@@ -127,13 +79,14 @@ function GameScreen() {
       >
         {imagePairs.map((id, index) => (
           <div key={index} className={styles["game-cell"]}>
-            {/* Pass the handleCardFlip function and whether the card is flipped to GameCard */}
+            {/* Pass the handleCardFlip function, whether the card is flipped, and the card's bonus to GameCard */}
             <GameCard
               key={index}
               id={index}
               imgId={id}
               onCardClick={() => handleCardFlip(index)}
               isFlipped={flippedCards.includes(index)}
+              bonus={cardBonuses[index]} // Pass the bonus for the card
             />
           </div>
         ))}

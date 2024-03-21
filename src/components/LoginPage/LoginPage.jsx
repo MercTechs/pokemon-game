@@ -7,9 +7,9 @@ function LoginPage() {
   const navigate = useNavigate();
   const [message, setMessage] = useState("");
 
-  const handleLogin = (username, password) => {
+  const handleLogin = (username) => {
     const user = usersData.find(
-      (u) => u.username === username && u.password === password
+      (u) => u.username === username
     );
 
     if (user) {
@@ -17,15 +17,14 @@ function LoginPage() {
       localStorage.setItem("username", username);
       navigate("/home");
     } else {
-      setMessage("Invalid username or password.");
+      setMessage("Invalid username");
     }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     const username = e.target.username.value;
-    const password = e.target.password.value;
-    handleLogin(username, password);
+    handleLogin(username);
   };
 
   return (
@@ -41,18 +40,6 @@ function LoginPage() {
             type="text"
             id="username"
             name="username"
-            required
-          />
-        </div>
-        <div>
-          <label className={styles.label} htmlFor="password">
-            Password:
-          </label>
-          <input
-            className={styles["input-field"]}
-            type="password"
-            id="password"
-            name="password"
             required
           />
         </div>
