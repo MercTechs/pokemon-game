@@ -9,28 +9,34 @@ import generateImagePairs from "./PairGen";
 function GameScreen() {
   const { level } = useParams();
   const gridSize = parseInt(level, 10);
-
   const navigate = useNavigate();
-
-  //stop re render cards everytime click
   const imagePairs = useMemo(() => generateImagePairs(level), [level]);
 
-  // track flipped cards
+  // State to track flipped cards
   const [flippedCards, setFlippedCards] = useState([]);
   const [cardBonuses, setCardBonuses] = useState([]); // Store bonuses for each card
+  const [totalPoints, setTotalPoints] = useState(0); // Total points state
 
-  //track match cards
-  const [matchCard, setMatchCard] = useState([]);
+  // Function to handle flipping of cards
+  const handleCardFlip = (index, imgId) => {
+    if (flippedCards.some((card) => card.index === index)) {
+      return;
+    }
+    // If there are already 2 cards flipped and not yet handled, reset them
+    if (flippedCards.length === 2) {
+      // Reset immediately if a third card is clicked
+      setFlippedCards([{ index, imgId }]);
+      updateCardBonuses();
+    } else {
+      // Add the new flipped card to the state
+      setFlippedCards([...flippedCards, { index, imgId }]);
+    }
+  };
 
   useEffect(() => {
-    //bonuses for each card: 60
-    setCardBonuses(new Array(imagePairs.length).fill(60));
+    // Initialize bonuses for each card to 60
+    setCardBonuses(new Array(imagePairs.length).fill(50));
   }, [imagePairs.length]);
-
-  useEffect(() => {
-    // log cardBonuses whenever it changes
-    console.log("bonus=====", cardBonuses);
-  }, [cardBonuses]);
 
   const handleBack = () => {
     navigate("/");
@@ -40,70 +46,55 @@ function GameScreen() {
   const updateCardBonuses = () => {
     setCardBonuses((prevBonuses) =>
       prevBonuses.map((bonus, index) =>
-        flippedCards.includes(index) ? bonus - 10 : bonus
+        flippedCards.some((card) => card.index === index)
+          ? Math.max(bonus - 10, 0) // Ensure the bonus doesn't go below 0
+          : bonus
       )
     );
-    console.log("bonus", cardBonuses);
   };
 
-  //  handle flip logic
-  function handleCardFlip(index, imgId) {
-    if (matchCard.includes(index) || flippedCards.includes(index)) {
-      return;
-    }
+  useEffect(() => {
+    // Log cardBonuses whenever it changes
+    console.log("cardBonuses:", cardBonuses);
+  }, [cardBonuses, updateCardBonuses]);
 
-    let newFlippedCards;
+  // State to keep track of matched cards
+  const [matchedCards, setMatchedCards] = useState([]);
 
-    if (flippedCards.length === 2) {
-      newFlippedCards = [index];
-      updateCardBonuses([index]);
-    } else {
-      newFlippedCards = [...flippedCards, index];
-    }
-
-    setFlippedCards(newFlippedCards);
-
-    if (newFlippedCards.length === 2) {
-      // console.log(imagePairs, "=====");
-      const firstCardImgId = imagePairs[newFlippedCards[0]];
-      // console.log(imgId);
-      const secondCardImgId = imgId;
-
-      // check match
-      if (firstCardImgId === secondCardImgId) {
-        // console.log(firstCardImgId, secondCardImgId);
-
-        // delay before hide
-        setTimeout(() => {
-          // add matched cards
-          setMatchCard([...matchCard, ...newFlippedCards]);
-          // reset flipped cards
-          setFlippedCards([]);
+  // Effect to handle the flipping back logic after 1 second
+  useEffect(() => {
+    if (flippedCards.length === 2 && flippedCards.some((card) => !matchedCards.includes(card.index))) {
+      const [firstCard, secondCard] = flippedCards;
+      if (firstCard.imgId === secondCard.imgId) {
+        // If the image IDs match, leave the cards flipped and calculate points
+        const timer = setTimeout(() => {
+          console.log("match==============");
+          const bonusPoints = cardBonuses[firstCard.index] + cardBonuses[secondCard.index];
+          const totalPoints = 100 + bonusPoints;
+          // Update total points
+          setTotalPoints((prevPoints) => prevPoints + totalPoints);
+          // Set matched cards to be hidden
+          setMatchedCards((prevMatchedCards) => [...prevMatchedCards, firstCard.index, secondCard.index]);
         }, 1000);
+        return () => clearTimeout(timer);
       } else {
-        // If cards do not match, reset flipped cards after a delay
-        setTimeout(() => {
+        // If the image IDs don't match, flip the cards back after 1 second
+        const timer = setTimeout(() => {
           setFlippedCards([]);
+          updateCardBonuses(); // Update card bonuses after flipping back
         }, 1000);
+        return () => clearTimeout(timer);
       }
     }
-  }
-
-  // flipping back logic after 1 second
-  useEffect(() => {
-    if (flippedCards.length === 2) {
-      const timer = setTimeout(() => {
-        setFlippedCards([]);
-        updateCardBonuses(); // Update card bonuses
-      }, 1000);
-      return () => clearTimeout(timer);
-    }
-  }, [flippedCards, updateCardBonuses]);
+  }, [flippedCards, updateCardBonuses, cardBonuses, matchedCards]);
 
   return (
     <div className={styles["game-screen"]}>
       <div className={styles["back-btn"]}>
         <button onClick={handleBack}>Back to Main</button>
+      </div>
+      <div>
+        <p>Total Points: {totalPoints}</p> {/* Display total points */}
       </div>
       <div
         className={styles["game-board"]}
@@ -113,22 +104,17 @@ function GameScreen() {
         }}
       >
         {imagePairs.map((id, index) => (
-          <div
-            key={index}
-            className={styles["game-cell"]}
-            style={{
-              visibility: matchCard.includes(index) ? "hidden" : "visible",
-            }}
-          >
+          <div key={index} className={`${styles["game-cell"]} ${matchedCards.includes(index) ? styles["hidden"] : ''}`}>
+            {/* Pass the handleCardFlip function, whether the card is flipped, and the card's bonus to GameCard */}
             <GameCard
               key={index}
               id={index}
               imgId={id}
               onCardClick={() => handleCardFlip(index, id)}
-              isFlipped={
-                flippedCards.includes(index) || matchCard.includes(index)
-              }
-              bonus={cardBonuses[index]}
+              isFlipped={flippedCards.some((card) => card.index === index)}
+              bonus={
+                cardBonuses[index]
+              } /* Pass the bonus for the card */
             />
           </div>
         ))}
