@@ -6,7 +6,7 @@ function GameCard({ id, imgId, onCardClick, isFlipped, isCompleted }) {
 
   return (
 
-    <div className={styles["flip-card"] + ` ${isCompleted ? styles["hidden"] : ""}`} onClick={onCardClick}>
+    <div className={styles["flip-card"] + ` ${isCompleted ? styles["hidden"] : ""}`} onClick={onCardClick} id={`${id}`}>
       <div className={cardClasses}>
         <div className={styles["flip-card-front"]}>
           <img

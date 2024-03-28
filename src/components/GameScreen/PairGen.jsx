@@ -53,6 +53,10 @@ export default function generateImagePairs(level) {
     [cards[i], cards[j]] = [cards[j], cards[i]];
   }
 
+  cards.forEach((card, index) => {
+    card.index = index;
+  });
+
   // Return only the required number of pairs
   return cards;
 }
