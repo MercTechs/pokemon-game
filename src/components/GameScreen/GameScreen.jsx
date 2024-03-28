@@ -26,7 +26,7 @@ function GameScreen() {
       }
     }
     return points;
-  }, [checkCards]);
+  }, [checkCards]); 
 
   useEffect(() => {
     if (checkCards.length === 2) {
@@ -35,15 +35,25 @@ function GameScreen() {
         firstCard.isComplete = true;
         secondCard.isComplete = true;
       } else {
-        for (const card of checkCards) {
-          card.isFlip = false;
-          card.bonusPoints = card.bonusPoints === 0 ? 0 : card.bonusPoints - 10;
-        }
+        setTimeout(() => {
+          console.log("gooooooooooooooooooooooo");
+
+          for (const card of checkCards) {
+            card.bonusPoints =
+              card.bonusPoints === 0 ? 0 : card.bonusPoints - 10;
+          }
+
+          firstCard.isFlip = false;
+          secondCard.isFlip = false;
+
+          console.log("ccccccccccc", firstCard.isFlip);
+          setCheckCards((checkCards) =>
+            checkCards.filter((card) => card.isFlip)
+          );
+        }, 1000);
       }
-      setCheckCards([]);
-      console.log("pairs===============", imagePairs);
     }
-  }, [checkCards]);
+  }, [checkCards, imagePairs]);
 
   return (
     <div className={styles["game-screen"]}>
@@ -59,7 +69,7 @@ function GameScreen() {
         }}
       >
         {imagePairs.map((card, index) => (
-          <div key={index} className={`${styles["game-cell"]}}`}>
+          <div key={index}  className={`${styles["game-cell"]} ${card.isComplete ? styles.hidden : ''}`}>
             {/* Pass the handleCardFlip function, whether the card is flipped, and the card's bonus to GameCard */}
 
             <GameCard
@@ -68,12 +78,15 @@ function GameScreen() {
               imgId={card.id}
               isFlipped={card.isFlip}
               onCardClick={() => {
-                if (!card.isFlip) {
-                  card.isFlip = true;
+                if (checkCards.length === 2) {
+                  checkCards.forEach((card) => {
+                    card.isFlip = false; // Unflip 2 card dau
+                  });
+                  setCheckCards([card]); // add card thu ba  
+                } else if (!card.isFlip) { 
                   setCheckCards([...checkCards, card]);
-                } else {
-                  return;
                 }
+                card.isFlip = true;  
               }}
             />
           </div>
