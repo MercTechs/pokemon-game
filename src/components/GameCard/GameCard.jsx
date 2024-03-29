@@ -17,7 +17,7 @@ function GameCard({ id, imgId, onCardClick, isFlipped, isCompleted }) {
               left: "9%",
             }}
             alt="random"
-            src={`/img/pokemons/back-card/PokeBall1.png`}
+            src={`/static/img/pokemons/back-card/PokeBall1.png`}
             className={styles["card-front"]}
           />
         </div>
@@ -29,7 +29,7 @@ function GameCard({ id, imgId, onCardClick, isFlipped, isCompleted }) {
               top: "20%",
               left: "9%",
             }}
-            src={`/img/pokemons/${imgId}.png`}
+            src={`/static/img/pokemons/${imgId}.png`}
             alt="random"
             className={styles["card-back"]}
           />
