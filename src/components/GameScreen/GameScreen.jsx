@@ -12,6 +12,8 @@ import PostScore from "../axios/PostScore";
 import Popup from "reactjs-popup";
 import { RotateCcw } from "lucide-react";
 
+import axios from "axios";
+
 function GameScreen() {
   const { level } = useParams();
   const gridSize = parseInt(level, 10);
@@ -22,9 +24,13 @@ function GameScreen() {
   const [checkCards, setCheckCards] = useState([]);
   const [gameEnded, setGameEnded] = useState(false);
 
+  const [postedScore, setPostedScore] = useState(false);
+
   const handleBack = () => {
     navigate("/");
   };
+
+  console.log(imagePairs);
 
   const totalPoints = useMemo(() => {
     let points = 0;
@@ -71,8 +77,6 @@ function GameScreen() {
     return true;
   };
 
-  console.log(checkGameEnd());
-
   const popupContent = (close) => (
     <div className={styles["popup"]}>
       Game Over! Your score: {totalPoints}
@@ -90,6 +94,25 @@ function GameScreen() {
       </div>
     </div>
   );
+
+  useEffect(() => {
+    if (gameEnded && !postedScore) {
+      const postData = async () => {
+        try {
+          const response = await axios.post("https://api.lotegame.com/score/", {
+            player: username,
+            score: totalPoints,
+            level: level,
+          });
+          console.log(response.data);
+        } catch (error) {
+          console.error(error);
+        }
+      };
+      postData();
+      setPostedScore(true);
+    }
+  }, [gameEnded, postedScore]);
 
   return (
     <div className={styles["game-screen"]}>
@@ -134,7 +157,6 @@ function GameScreen() {
       </div>
       {gameEnded && (
         <>
-          <PostScore player={username} score={totalPoints} level={level} />
           <Popup
             open={gameEnded}
             closeOnDocumentClick
