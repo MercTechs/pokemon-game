@@ -9,6 +9,9 @@ import generateImagePairs from "./PairGen";
 import GetScore from "../axios/GetScore";
 import PostScore from "../axios/PostScore";
 
+import Popup from "reactjs-popup";
+import { RotateCcw } from "lucide-react";
+
 function GameScreen() {
   const { level } = useParams();
   const gridSize = parseInt(level, 10);
@@ -68,6 +71,26 @@ function GameScreen() {
     return true;
   };
 
+  console.log(checkGameEnd());
+
+  const popupContent = (close) => (
+    <div className={styles["popup"]}>
+      Game Over! Your score: {totalPoints}
+      <div className={styles["popup-btn"]}>
+        <button
+          className="close"
+          onClick={() => {
+            close();
+            window.location.reload();
+          }}
+        >
+          <RotateCcw />
+        </button>
+        <button onClick={handleBack}>Back to Main</button>
+      </div>
+    </div>
+  );
+
   return (
     <div className={styles["game-screen"]}>
       <div className={styles["back-btn"]}>
@@ -110,7 +133,16 @@ function GameScreen() {
         ))}
       </div>
       {gameEnded && (
-        <PostScore player={username} score={totalPoints} level={level} />
+        <>
+          <PostScore player={username} score={totalPoints} level={level} />
+          <Popup
+            open={gameEnded}
+            closeOnDocumentClick
+            onClose={() => setGameEnded(false)}
+          >
+            {popupContent}
+          </Popup>
+        </>
       )}
     </div>
   );
