@@ -8,17 +8,9 @@ function LoginPage() {
   const [message, setMessage] = useState("");
 
   const handleLogin = (username) => {
-    const user = usersData.find(
-      (u) => u.username === username
-    );
-
-    if (user) {
-      localStorage.setItem("isLoggedIn", true);
-      localStorage.setItem("username", username);
-      navigate("/home");
-    } else {
-      setMessage("Invalid username");
-    }
+    localStorage.setItem("isLoggedIn", true);
+    localStorage.setItem("username", username);
+    navigate("/home");
   };
 
   const handleSubmit = (e) => {
