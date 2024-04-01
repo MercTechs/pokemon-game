@@ -28,3 +28,21 @@
 .hidden {
     visibility: hidden;
 }
+
+.popup {
+    background-color: white;
+    border: 1px solid black;
+    border-radius: 20px;
+    padding: 20px;
+    display: flex;
+    flex-flow: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.popup-btn button{
+    border: 1px solid black;
+margin: 4px;
+}
+
+ 
