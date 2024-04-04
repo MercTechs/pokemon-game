@@ -5,10 +5,16 @@ function GameCard({ id, imgId, onCardClick, isFlipped, isCompleted }) {
   const cardClasses = `${styles["flip-card-inner"]} ${isFlipped ? styles.flip : ""}`;
 
   return (
-
-    <div className={styles["flip-card"] + ` ${isCompleted ? styles["hidden"] : ""}`} onClick={onCardClick} id={`${id}`}>
+    <div
+      className={
+        styles["flip-card"] + ` ${isCompleted ? styles["hidden"] : ""}`
+      }
+      onClick={onCardClick}
+      id={`${id}`}
+    >
       <div className={cardClasses}>
         <div className={styles["flip-card-front"]}>
+          {import.meta.env.DEV && <div>{imgId}</div>}
           <img
             style={{
               maxWidth: "70px",
@@ -34,7 +40,6 @@ function GameCard({ id, imgId, onCardClick, isFlipped, isCompleted }) {
             className={styles["card-back"]}
           />
         </div>
-        <div>{imgId}</div>
       </div>
     </div>
   );

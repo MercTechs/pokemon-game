@@ -30,8 +30,6 @@ function GameScreen() {
     navigate("/");
   };
 
-  console.log(imagePairs);
-
   const totalPoints = useMemo(() => {
     let points = 0;
     for (const card of imagePairs) {
@@ -40,7 +38,7 @@ function GameScreen() {
       }
     }
     return points;
-  }, [checkCards]);
+  }, [checkCards, gameEnded]);
 
   useEffect(() => {
     if (checkCards.length === 2) {
@@ -94,7 +92,6 @@ function GameScreen() {
       </div>
     </div>
   );
-
   useEffect(() => {
     if (gameEnded && !postedScore) {
       const postData = async () => {
@@ -104,7 +101,6 @@ function GameScreen() {
             score: totalPoints,
             level: level,
           });
-          console.log(response.data);
         } catch (error) {
           console.error(error);
         }
