@@ -30,8 +30,6 @@ function GameScreen() {
     navigate("/");
   };
 
-  console.log(imagePairs);
-
   const totalPoints = useMemo(() => {
     let points = 0;
     for (const card of imagePairs) {
