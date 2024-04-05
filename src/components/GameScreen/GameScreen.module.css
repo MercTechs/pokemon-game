@@ -40,9 +40,21 @@
     justify-content: center;
 }
 
-.popup-btn button{
+.popup-btn button {
     border: 1px solid black;
-margin: 4px;
+    margin: 4px;
 }
 
- 
+.total-points-board {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    padding-top: 20px;
+}
+
+.total-points {
+    font-size: 32px;
+    font-family: monospace;
+}
