@@ -25,6 +25,7 @@ function GameScreen() {
   const [gameEnded, setGameEnded] = useState(false);
 
   const [postedScore, setPostedScore] = useState(false);
+  const [displayedPoints, setDisplayedPoints] = useState(0); // New state for displaying points incrementally
 
   const handleBack = () => {
     navigate("/");
@@ -39,6 +40,17 @@ function GameScreen() {
     }
     return points;
   }, [checkCards, gameEnded]);
+
+  useEffect(() => {
+    if (totalPoints !== displayedPoints) {
+      const timer = setInterval(() => {
+        setDisplayedPoints((prevPoints) =>
+          prevPoints === totalPoints ? totalPoints : prevPoints + 5
+        );
+      }, 10); // Adjust this interval to change the speed of incrementation
+      return () => clearInterval(timer);
+    }
+  }, [totalPoints, displayedPoints]);
 
   useEffect(() => {
     if (checkCards.length === 2) {
@@ -92,6 +104,7 @@ function GameScreen() {
       </div>
     </div>
   );
+
   useEffect(() => {
     if (gameEnded && !postedScore) {
       const postData = async () => {
@@ -105,8 +118,12 @@ function GameScreen() {
           console.error(error);
         }
       };
-      postData();
-      setPostedScore(true);
+      if (import.meta.env.DEV) {
+        setPostedScore(true);
+      } else {
+        postData();
+        setPostedScore(true);
+      }
     }
   }, [gameEnded, postedScore]);
 
@@ -115,41 +132,46 @@ function GameScreen() {
       <div className={styles["back-btn"]}>
         <button onClick={handleBack}>Back to Main</button>
       </div>
-      <div>
-        <GetScore level={level} />
-        <div className={styles["total-points"]}>Your Score: {totalPoints}</div>
-      </div>
-      <div
-        className={styles["game-board"]}
-        style={{
-          display: "grid",
-          gridTemplateColumns: `repeat(${gridSize}, 1fr)`,
-        }}
-      >
-        {imagePairs.map((card, index) => (
-          <div
-            key={index}
-            className={`${styles["game-cell"]} ${card.isComplete ? styles.hidden : ""}`}
-          >
-            <GameCard
+      <GetScore level={level} currentScore={displayedPoints} />{" "}
+      {/* Display the incrementing score */}
+      <div className={styles["total-points-board"]}>
+        <div className={styles["total-points"]}>
+          Score: {displayedPoints} {/* Display the incrementing score */}
+        </div>
+        <div
+          className={styles["game-board"]}
+          style={{
+            display: "grid",
+            gridTemplateColumns: `repeat(${gridSize}, 1fr)`,
+          }}
+        >
+          {imagePairs.map((card, index) => (
+            <div
               key={index}
-              id={index}
-              imgId={card.id}
-              isFlipped={card.isFlip}
-              onCardClick={() => {
-                if (checkCards.length === 2) {
-                  checkCards.forEach((card) => {
-                    card.isFlip = false; // Unflip 2 card dau
-                  });
-                  setCheckCards([card]); // add card thu ba
-                } else if (!card.isFlip) {
-                  setCheckCards([...checkCards, card]);
-                }
-                card.isFlip = true;
-              }}
-            />
-          </div>
-        ))}
+              className={`${styles["game-cell"]} ${
+                card.isComplete ? styles.hidden : ""
+              }`}
+            >
+              <GameCard
+                key={index}
+                id={index}
+                imgId={card.id}
+                isFlipped={card.isFlip}
+                onCardClick={() => {
+                  if (checkCards.length === 2) {
+                    checkCards.forEach((card) => {
+                      card.isFlip = false; // Unflip 2 card dau
+                    });
+                    setCheckCards([card]); // add card thu ba
+                  } else if (!card.isFlip) {
+                    setCheckCards([...checkCards, card]);
+                  }
+                  card.isFlip = true;
+                }}
+              />
+            </div>
+          ))}
+        </div>
       </div>
       {gameEnded && (
         <>

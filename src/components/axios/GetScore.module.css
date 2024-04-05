@@ -1,0 +1,55 @@
+.leader-board {
+    border: 1px solid black;
+    position: absolute;
+    padding-top: 24px;
+    font-size: 24px;
+    /* border-radius: 8px; */
+}
+
+.leader-board-list {
+    list-style: none;
+}
+
+.leader-board-label {
+    padding: 24px;
+}
+
+.leader-board-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.leader-board-table th,
+.leader-board-table td {
+    padding: 8px 24px;
+}
+
+.leader-board-table th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+    text-align: center;
+}
+
+.leader-board-row:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.leader-board-row:hover {
+    background-color: #ddd;
+    cursor: pointer;
+}
+
+.crown-icon {
+    margin-right: 8px;
+}
+
+.first-player {
+    font-weight: bold;
+    font-size: 32px;
+    background-color: rgb(116, 235, 225);
+    /* Add any other styles you want to distinguish the first player */
+}
+
+.current-player {
+    background-color: rgb(238, 217, 98) !important;
+}
