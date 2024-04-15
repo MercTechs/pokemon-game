@@ -7,7 +7,6 @@ import GameCard from "../GameCard/GameCard";
 import generateImagePairs from "./PairGen";
 
 import GetScore from "../axios/GetScore";
-import PostScore from "../axios/PostScore";
 
 import Popup from "reactjs-popup";
 import { RotateCcw } from "lucide-react";
@@ -42,14 +41,15 @@ function GameScreen() {
   }, [checkCards, gameEnded]);
 
   useEffect(() => {
+    let timer;
     if (totalPoints !== displayedPoints) {
-      const timer = setInterval(() => {
+      timer = setInterval(() => {
         setDisplayedPoints((prevPoints) =>
-          prevPoints === totalPoints ? totalPoints : prevPoints + 5
+          prevPoints >= totalPoints ? totalPoints : prevPoints + 5
         );
       }, 10); // Adjust this interval to change the speed of incrementation
-      return () => clearInterval(timer);
     }
+    return () => clearInterval(timer);
   }, [totalPoints, displayedPoints]);
 
   useEffect(() => {
