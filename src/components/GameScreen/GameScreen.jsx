@@ -1,17 +1,16 @@
-import React, { useEffect, useMemo, useState } from "react";
+/* eslint-disable no-unused-vars */
+/* eslint-disable react/no-unescaped-entities */
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useEffect, useMemo, useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 
 import styles from "./GameScreen.module.css";
-
 import GameCard from "../GameCard/GameCard";
 import generateImagePairs from "./PairGen";
-
 import GetScore from "../axios/GetScore";
-import PostScore from "../axios/PostScore";
-
+import TimeCounter from "../TimeCounter/TimeCounter";
 import Popup from "reactjs-popup";
 import { RotateCcw } from "lucide-react";
-
 import axios from "axios";
 
 function GameScreen() {
@@ -20,16 +19,33 @@ function GameScreen() {
   const navigate = useNavigate();
   const username = localStorage.getItem("username");
   const imagePairs = useMemo(() => generateImagePairs(level), [level]);
-
   const [checkCards, setCheckCards] = useState([]);
   const [gameEnded, setGameEnded] = useState(false);
-
+  const [timeUp, setTimeUp] = useState(false);
   const [postedScore, setPostedScore] = useState(false);
-  const [displayedPoints, setDisplayedPoints] = useState(0); // New state for displaying points incrementally
+  const [displayedPoints, setDisplayedPoints] = useState(0);
+  const [playTime, setPlayTime] = useState(0);
+  const [progress, setProgress] = useState(0);
 
   const handleBack = () => {
     navigate("/");
   };
+
+  const levelPlayTimes = {
+    4: 6000,
+    6: 12000,
+    8: 18000,
+    10: 36000,
+  };
+
+  // Function to update progress
+  const updateProgress = (newProgress) => {
+    setProgress(newProgress);
+  };
+
+  useEffect(() => {
+    setPlayTime(levelPlayTimes[level]);
+  }, [level]);
 
   const totalPoints = useMemo(() => {
     let points = 0;
@@ -47,7 +63,7 @@ function GameScreen() {
         setDisplayedPoints((prevPoints) =>
           prevPoints === totalPoints ? totalPoints : prevPoints + 5
         );
-      }, 10); // Adjust this interval to change the speed of incrementation
+      }, 10);
       return () => clearInterval(timer);
     }
   }, [totalPoints, displayedPoints]);
@@ -59,7 +75,7 @@ function GameScreen() {
         firstCard.isComplete = true;
         secondCard.isComplete = true;
         if (checkGameEnd()) {
-          setGameEnded(!gameEnded);
+          setGameEnded(true);
         }
       } else {
         setTimeout(() => {
@@ -87,9 +103,20 @@ function GameScreen() {
     return true;
   };
 
+  const handleTimeUp = useCallback(() => {
+    setTimeUp(true);
+    setGameEnded(true);
+  }, []);
+
   const popupContent = (close) => (
     <div className={styles["popup"]}>
-      Game Over! Your score: {totalPoints}
+      {timeUp ? (
+        <div>Game Over! Your score: {totalPoints}</div>
+      ) : (
+        <div>
+          Clear! Your score: {totalPoints} Playtime: {progress}s
+        </div>
+      )}
       <div className={styles["popup-btn"]}>
         <button
           className="close"
@@ -106,13 +133,14 @@ function GameScreen() {
   );
 
   useEffect(() => {
-    if (gameEnded && !postedScore) {
+    if (gameEnded && !postedScore && !timeUp) {
       const postData = async () => {
         try {
           const response = await axios.post("https://api.lotegame.com/score/", {
             player: username,
             score: totalPoints,
             level: level,
+            // time: progress,
           });
         } catch (error) {
           console.error(error);
@@ -125,19 +153,16 @@ function GameScreen() {
         setPostedScore(true);
       }
     }
-  }, [gameEnded, postedScore]);
+  }, [gameEnded, postedScore, timeUp]);
 
   return (
     <div className={styles["game-screen"]}>
       <div className={styles["back-btn"]}>
         <button onClick={handleBack}>Back to Main</button>
       </div>
-      <GetScore level={level} currentScore={displayedPoints} />{" "}
-      {/* Display the incrementing score */}
+      <GetScore level={level} currentScore={displayedPoints} />
       <div className={styles["total-points-board"]}>
-        <div className={styles["total-points"]}>
-          Score: {displayedPoints} {/* Display the incrementing score */}
-        </div>
+        <div className={styles["total-points"]}>Score: {displayedPoints}</div>
         <div
           className={styles["game-board"]}
           style={{
@@ -160,9 +185,9 @@ function GameScreen() {
                 onCardClick={() => {
                   if (checkCards.length === 2) {
                     checkCards.forEach((card) => {
-                      card.isFlip = false; // Unflip 2 card dau
+                      card.isFlip = false;
                     });
-                    setCheckCards([card]); // add card thu ba
+                    setCheckCards([card]);
                   } else if (!card.isFlip) {
                     setCheckCards([...checkCards, card]);
                   }
@@ -184,6 +209,14 @@ function GameScreen() {
           </Popup>
         </>
       )}
+      <div className={styles["time-counter-container"]}>
+        <TimeCounter
+          totalTime={playTime}
+          onTimeUp={handleTimeUp}
+          gameEnded={gameEnded}
+          updateProgress={updateProgress}
+        />
+      </div>
     </div>
   );
 }

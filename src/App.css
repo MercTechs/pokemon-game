@@ -1,3 +1,16 @@
+/* Default light mode */
+body {
+  background-color: #ffffff;
+  color: #000000;
+}
+
+/* Dark mode */
+body.dark-mode {
+  background-color: #333333;
+  color: #ffffff;
+}
+
+/* Styles for #root, .logo, .card, .read-the-docs, .select-mode remain the same */
 #root {
   width: 100%;
   height: 100vh;

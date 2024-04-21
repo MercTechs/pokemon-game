@@ -1,6 +1,6 @@
+/* eslint-disable no-unused-vars */
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import usersData from "../../user-data/users.json";
 import styles from "./LoginPage.module.css";
 
 function LoginPage() {

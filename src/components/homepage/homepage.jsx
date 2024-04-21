@@ -9,7 +9,6 @@ function HomePage() {
     { level: 8, difficulty: "Hard" },
     { level: 10, difficulty: "Super Hard" },
   ];
-
   // Retrieve isLoggedIn and username from localStorage
   const isLoggedIn = localStorage.getItem("isLoggedIn");
   const username = localStorage.getItem("username");
